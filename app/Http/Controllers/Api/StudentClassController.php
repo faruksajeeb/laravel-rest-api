@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\StudentClass;
 use Illuminate\Http\Request;
 use DB;
 
@@ -30,7 +31,15 @@ class StudentClassController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'class_name' => 'required|unique:student_classes|max:25'
+        ]);
+
+        $data = array(
+            'class_name' => $request->class_name
+        );
+        DB::table('student_classes')->insert($data);
+        return response('Inserted!');
     }
 
     /**
@@ -38,7 +47,8 @@ class StudentClassController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $class = StudentClass::findorfail($id);
+        return response()->json($class);
     }
 
     /**
@@ -54,7 +64,11 @@ class StudentClassController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $data = array(
+            'class_name' => $request->class_name
+        );
+        DB::table('student_classes')->where('id',$id)->update($data);
+        return response('Updated!');
     }
 
     /**
@@ -62,6 +76,7 @@ class StudentClassController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        DB::table('student_classes')->where('id',$id)->delete();
+        return response("Deleted!");
     }
 }
